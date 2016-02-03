@@ -10,8 +10,8 @@
 //			Game ID					Range: 1000-1999		
 //----------------------------------------------------------------
 
-#define IDG_BLIZZARD					1000
-#define IDG_UFO							1001
+#define IDG_TEST					    1000
+#define IDG_TEST2							1001
 
 
 #endif
