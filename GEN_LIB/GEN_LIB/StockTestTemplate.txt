@@ -7,7 +7,7 @@
 // Include Files -and- function declarations
 //-----------------------------------------------------------------
 
-#include "Henway_Wrapper.h"
+#include "Test_Wrapperr.h"
 
 LRESULT CALLBACK WndProc(HWND hWindow, UINT msg, WPARAM wParam, LPARAM lParam);
 
