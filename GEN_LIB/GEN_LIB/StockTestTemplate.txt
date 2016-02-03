@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------
-// C++ Win32 Application - Henway.exe
-// C++ Driver File - Henway_Driver.cpp
+// C++ Win32 Application - Test.exe
+// C++ Driver File - Test_Driver.cpp
 //-----------------------------------------------------------------
 
 //-----------------------------------------------------------------
@@ -25,7 +25,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	int         iTickCount;
 
 	GameWrapperPtr Game_Wrapper = GameWrapperPtr(new GEN::Henway_Wrapper(hInstance,
-		WndProc, TEXT("HENWAY"), TEXT("HENWAY"), IDI_HENWAY, IDI_HENWAY_SM, 465, 400));
+		WndProc, TEXT("TEST"), TEXT("TEST"), IDI_TEST, IDI_TEST_SM, 465, 400));
 
 	if (Game_Wrapper->GameInitialize(hInstance))
 	{
