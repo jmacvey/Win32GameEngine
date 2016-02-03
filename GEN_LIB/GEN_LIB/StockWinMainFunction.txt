@@ -1,0 +1,134 @@
+========================================================================
+    STATIC LIBRARY : Global WinMain Function Used for Software
+========================================================================
+
+//-------------------------------------------------------------------
+// C++ Win32 Application - GameDriver.exe
+// C++ Driver File - GameDriver.cpp
+//-------------------------------------------------------------------
+
+//-------------------------------------------------------------------
+// Include Files -and- Forward Declarations
+//-------------------------------------------------------------------
+
+#include "GameInterface.h"
+#include "Windows.h"
+#include "resource.h"
+
+LRESULT CALLBACK WndProc(HWND hWindow, UINT msg, WPARAM wParam, LPARAM lParam);
+
+//-------------------------------------------------------------------
+// Windows Functions
+//-------------------------------------------------------------------
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+	PSTR szCmdLine, int iCmdShow)
+{
+	typedef std::tr1::shared_ptr<GameInterface> GameInterfacePtr;
+	MSG         msg;
+	// for clocking
+	static int  iTickTrigger = 0;
+	int         iTickCount;
+
+	GameInterfacePtr GameInterface(GameInterface::Create_Wrapper(RESOURCE_ID));
+	if (X_Wrapper->GameInitialize(hInstance))
+	{
+		// Initialize the game engine
+		if (!X_Wrapper->InitializeWindow(iCmdShow))
+			return FALSE;
+
+		// Enter the main message loop
+		while (TRUE)
+		{
+			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			{
+				// Process the message
+				if (msg.message == WM_QUIT)
+					break;
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+			else
+			{
+				// Make sure the game engine isn't sleeping
+				if (!X_Wrapper->GetEngine()->GetSleep())
+				{
+					// Check the tick count to see if a game cycle has elapsed
+					iTickCount = GetTickCount();
+					if (iTickCount > iTickTrigger)
+					{
+						iTickTrigger = iTickCount +
+							X_Wrapper->GetFrameDelay();
+						X_Wrapper->GetEngine()->HandleKeys();
+						X_Wrapper->GetEngine()->GameCycle();
+					}
+				}
+			}
+		}
+		return (int)msg.wParam;
+	}
+
+	// End the game
+	X_Wrapper->GetEngine()->GameEnd();
+
+	return TRUE;
+}
+
+========================================================================
+    STATIC LIBRARY : Global WinMain Function Used for Testing
+========================================================================
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+	PSTR szCmdLine, int iCmdShow)
+{
+	typedef std::tr1::shared_ptr<GEN::Wrapper> GameWrapperPtr;
+
+	MSG         msg;
+	static int  iTickTrigger = 0;
+	int         iTickCount;
+
+	GameWrapperPtr Game_Wrapper = GameWrapperPtr(new GEN::Henway_Wrapper(hInstance,
+		WndProc, TEXT("GAME"), TEXT("GAME"), IDI_GAME, IDI_GAME_SM, 465, 400));
+
+	if (Game_Wrapper->GameInitialize(hInstance))
+	{
+		// Initialize the game engine
+		if (!Game_Wrapper->InitializeWindow(iCmdShow))
+			return FALSE;
+
+		// Enter the main message loop
+		while (TRUE)
+		{
+			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			{
+				// Process the message
+				if (msg.message == WM_QUIT)
+					break;
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+			else
+			{
+				// Make sure the game engine isn't sleeping
+				if (!Game_Wrapper->GetEngine()->GetSleep())
+				{
+					// Check the tick count to see if a game cycle has elapsed
+					iTickCount = GetTickCount();
+					if (iTickCount > iTickTrigger)
+					{
+						iTickTrigger = iTickCount +
+							Game_Wrapper->GetFrameDelay();
+						Game_Wrapper->GetEngine()->HandleKeys();
+						Game_Wrapper->GetEngine()->GameCycle();
+					}
+				}
+			}
+		}
+		return (int)msg.wParam;
+	}
+
+	// End the game
+	Game_Wrapper->GetEngine()->GameEnd();
+
+	return TRUE;
+}

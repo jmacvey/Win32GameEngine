@@ -1,0 +1,107 @@
+//-----------------------------------------------------------------
+// C++ Win32 Application - Henway.exe
+// C++ Driver File - Henway_Driver.cpp
+//-----------------------------------------------------------------
+
+//-----------------------------------------------------------------
+// Include Files -and- function declarations
+//-----------------------------------------------------------------
+
+#include "Henway_Wrapper.h"
+
+LRESULT CALLBACK WndProc(HWND hWindow, UINT msg, WPARAM wParam, LPARAM lParam);
+
+//-----------------------------------------------------------------
+// Windows Functions
+//-----------------------------------------------------------------
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+	PSTR szCmdLine, int iCmdShow)
+{
+	typedef std::tr1::shared_ptr<GEN::Wrapper> GameWrapperPtr;
+
+	MSG         msg;
+	static int  iTickTrigger = 0;
+	int         iTickCount;
+
+	GameWrapperPtr Game_Wrapper = GameWrapperPtr(new GEN::Henway_Wrapper(hInstance,
+		WndProc, TEXT("HENWAY"), TEXT("HENWAY"), IDI_HENWAY, IDI_HENWAY_SM, 465, 400));
+
+	if (Game_Wrapper->GameInitialize(hInstance))
+	{
+		// Initialize the game engine
+		if (!Game_Wrapper->InitializeWindow(iCmdShow))
+			return FALSE;
+
+		// Enter the main message loop
+		while (TRUE)
+		{
+			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			{
+				// Process the message
+				if (msg.message == WM_QUIT)
+					break;
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+			else
+			{
+				// Make sure the game engine isn't sleeping
+				if (!Game_Wrapper->GetEngine()->GetSleep())
+				{
+					// Check the tick count to see if a game cycle has elapsed
+					iTickCount = GetTickCount();
+					if (iTickCount > iTickTrigger)
+					{
+						iTickTrigger = iTickCount +
+							Game_Wrapper->GetFrameDelay();
+						Game_Wrapper->GetEngine()->HandleKeys();
+						Game_Wrapper->GetEngine()->GameCycle();
+					}
+				}
+			}
+		}
+		return (int)msg.wParam;
+	}
+
+	// End the game
+	Game_Wrapper->GetEngine()->GameEnd();
+
+	return TRUE;
+}
+
+
+LRESULT CALLBACK WndProc(HWND hWindow, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	typedef GEN::Wrapper* GameInterfacePtr;
+	// Route all Windows messages to the game engine
+	GameInterfacePtr InterfacePtr;
+	if (msg == WM_CREATE)
+	{
+		// extract window instance pointer from lparam
+		CREATESTRUCT* createStruct = (CREATESTRUCT*)lParam;
+		// store it
+		InterfacePtr = (GameInterfacePtr)(createStruct->lpCreateParams);
+		// set the window long ptr
+		SetWindowLongPtr(hWindow, GWLP_USERDATA, (LONG_PTR)InterfacePtr);
+
+		return InterfacePtr->HandleEvent(hWindow, msg, wParam, lParam);
+	}
+	else
+	{
+		// get window instance from userdata
+		InterfacePtr = (GameInterfacePtr)GetWindowLongPtr(hWindow, GWLP_USERDATA);
+	}
+	if (InterfacePtr != nullptr)
+	{
+		if (msg == WM_DESTROY)
+		{
+			return InterfacePtr->HandleEvent(hWindow, msg, wParam, lParam);
+		}
+		else
+		{
+			return InterfacePtr->GetEngine()->HandleEvent(hWindow, msg, wParam, lParam);
+		}
+	}
+	return DefWindowProc(hWindow, msg, wParam, lParam);
+}

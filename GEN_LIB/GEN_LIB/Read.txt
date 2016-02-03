@@ -1,0 +1,18 @@
+========================================================================
+    STATIC LIBRARY : GEN_Lib Project Overview
+========================================================================
+
+/////////////////////////////////////////////////////////////////////////////
+
+This library represents a 2-D Game Development Environment written in C++
+using the pImpl (pointer to implementation) idiom.  To use the code to create
+an independent game based on this Engine, you will need to create a custom
+wrapper and GameEngine derived from the base classes.  
+
+/////////////////////////////////////////////////////////////////////////////
+Other notes:
+
+AppWizard uses "TODO:" comments to indicate parts of the source code you
+should add to or customize.
+
+/////////////////////////////////////////////////////////////////////////////

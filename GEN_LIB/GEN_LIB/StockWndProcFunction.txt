@@ -1,0 +1,70 @@
+====================================================================================
+    STATIC LIBRARY : Global WndProc Function Used for Future Software implementation
+====================================================================================
+
+LRESULT CALLBACK WndProc(HWND hWindow, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	typedef std::tr1::shared_ptr<GameInterface> GameInterfacePtr;
+	// Route all Windows messages to the game engine
+	GameInterfacePtr InterfacePtr(nullptr);
+	if (msg == WM_CREATE)
+	{
+		// extract window instance pointer from lparam
+		CREATESTRUCT* createStruct = (CREATESTRUCT*)lParam;
+		// store it
+		InterfacePtr = GameInterfacePtr((GameInterface*)createStruct->lpCreateParams);
+		// set the window long ptr
+		SetWindowLongPtr(hWindow, GWLP_USERDATA, (LONG_PTR)InterfacePtr.get());
+	}
+	else
+	{
+		// get window instance from userdata
+		InterfacePtr = GameInterfacePtr((GameInterface*)GetWindowLongPtr(hWindow, GWLP_USERDATA));
+	}
+	if (InterfacePtr != nullptr)
+	{
+		return InterfacePtr->GetEngine()->HandleEvent(hWindow, msg, wParam, lParam);
+	}
+
+	return DefWindowProc(hWindow, msg, wParam, lParam);
+}
+
+
+====================================================================================
+    STATIC LIBRARY : Global WndProc Function Used for Individual Game Testing
+====================================================================================
+
+LRESULT CALLBACK WndProc(HWND hWindow, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	typedef GEN::Wrapper* GameInterfacePtr;
+	// Route all Windows messages to the game engine
+	GameInterfacePtr InterfacePtr;
+	if (msg == WM_CREATE)
+	{
+		// extract window instance pointer from lparam
+		CREATESTRUCT* createStruct = (CREATESTRUCT*)lParam;
+		// store it
+		InterfacePtr = (GameInterfacePtr)(createStruct->lpCreateParams);
+		// set the window long ptr
+		SetWindowLongPtr(hWindow, GWLP_USERDATA, (LONG_PTR)InterfacePtr);
+
+		return InterfacePtr->HandleEvent(hWindow, msg, wParam, lParam);
+	}
+	else
+	{
+		// get window instance from userdata
+		InterfacePtr = (GameInterfacePtr)GetWindowLongPtr(hWindow, GWLP_USERDATA);
+	}
+	if (InterfacePtr != nullptr)
+	{
+		if (msg == WM_DESTROY)
+		{
+			return InterfacePtr->HandleEvent(hWindow, msg, wParam, lParam);
+		}
+		else
+		{
+			return InterfacePtr->GetEngine()->HandleEvent(hWindow, msg, wParam, lParam);
+		}
+	}
+	return DefWindowProc(hWindow, msg, wParam, lParam);
+}

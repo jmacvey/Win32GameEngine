@@ -1,0 +1,18 @@
+﻿Build started 1/20/2016 11:47:53 AM.
+     1>Project "C:\Users\Jmacvey\Documents\Visual Studio 2015\Projects\Game_Specific\GEN_LIB\GEN_LIB\GEN_LIB.vcxproj" on node 2 (Build target(s)).
+     1>Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\Lib.exe /OUT:"C:\Users\Jmacvey\Documents\Visual Studio 2015\Projects\Game_Specific\BattleOffice\Debug\GEN_LIB.lib" /NOLOGO Debug\Background.obj
+         Debug\Bitmap.obj
+         Debug\GameEngine.obj
+         Debug\GameInterface.obj
+         Debug\MIDIPlayer.obj
+         Debug\Sprite.obj
+         Debug\SpriteManager.obj
+         Debug\StarryBackground.obj
+         Debug\Wrapper.obj
+         GEN_LIB.vcxproj -> C:\Users\Jmacvey\Documents\Visual Studio 2015\Projects\Game_Specific\BattleOffice\Debug\GEN_LIB.lib
+     1>Done Building Project "C:\Users\Jmacvey\Documents\Visual Studio 2015\Projects\Game_Specific\GEN_LIB\GEN_LIB\GEN_LIB.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.24
